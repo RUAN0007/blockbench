@@ -31,7 +31,7 @@ const std::string DEPLOY_COMMAND_PREFIX =
     \"method\": \"deploy\", \
     \"params\": { \
                   \"type\": 1, \
-                  \"chaincodeID\":{ \"path\": \"";
+                  \"chaincodeID\":{ \"name\": \"";
 
 const std::string COMMON_COMMAND_SUFFIX = "] } }, \"id\": 1 }";
 

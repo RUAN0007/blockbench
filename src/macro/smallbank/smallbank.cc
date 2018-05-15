@@ -103,10 +103,10 @@ int StatusThread(SmallBank* sb, string endpoint, double interval, int start_bloc
 int main(int argc, char* argv[]) {
   if (argc != 7) {
     cerr << "Usage: " << argv[0]
-         << " [total_ops] [thread_num] [interval] [file_path] [end_point]"
+         << " [total_ops] [thread_num] [interval] [file_path] [end_point] [chaincode_name]"
          << endl;
     cerr << "   eg: " << argv[0]
-         << " 10000 4 1000 stat.txt localhost:7050/chaincode/" << endl;
+         << " 10000 4 1000 stat.txt localhost:7050/chaincode/ smallbank" << endl;
     return 0;
   }
 
@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
   }
   os_.open(spath, std::ios::app);
 
-  SmallBank* sb = SmallBank::GetInstance("github.com/smallbank", argv[5]);
+  SmallBank* sb = SmallBank::GetInstance(argv[6], argv[5]);
   sb->Init(&pendingtx, &txlock_);
 
   int current_tip = sb->get_tip_block_number();
