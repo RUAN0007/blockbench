@@ -23,10 +23,10 @@ std::ofstream os_;
 Timer<double> stat_timer;
 
 const int HL_CONFIRM_BLOCK_LENGTH = 1;
-const int BLOCK_POLLING_INTEVAL = 2; 
+const int BLOCK_POLLING_INTEVAL = 2;
 
 SpinLock spinlock_, txlock_;
-std::unordered_map<string, double> pendingtx; 
+std::unordered_map<string, double> pendingtx;
 
 void ClientThread(SmallBank* sb, const int num_ops, const int ivl) {
   UniformGenerator op_gen(1, 6);
@@ -55,7 +55,7 @@ void ClientThread(SmallBank* sb, const int num_ops, const int ivl) {
         sb->WriteCheck(acc_gen.Next(), 0);
         break;
     }
-    sleep(0.1); 
+    sleep(0.1);
   }
 }
 
@@ -67,32 +67,32 @@ int StatusThread(SmallBank* sb, string endpoint, double interval, int start_bloc
   long latency;
 
   while(true){
-    start_time = time_now(); 
-    int tip = sb->get_tip_block_number(); 
+    start_time = time_now();
+    int tip = sb->get_tip_block_number();
     if (tip==-1) // fail
-      sleep(interval); 
-    while (cur_block_height+HL_CONFIRM_BLOCK_LENGTH<= tip){      
-      vector<string> txs = sb->poll_tx(cur_block_height); 
-      cout << "polled block " << cur_block_height << " : " << txs.size() << " txs " << endl; 
-      cur_block_height++;           
-      long block_time = time_now(); 
+      sleep(interval);
+    while (cur_block_height+HL_CONFIRM_BLOCK_LENGTH<= tip){
+      vector<string> txs = sb->poll_tx(cur_block_height);
+      cout << "polled block " << cur_block_height << " : " << txs.size() << " txs " << endl;
+      cur_block_height++;
+      long block_time = time_now();
       txlock_.lock();
       for (string tmp : txs){
-        string s = tmp; 
-        if (pendingtx.find(s)!=pendingtx.end()){ 
-          txcount++; 
-          latency += (block_time - pendingtx[s]); 
+        string s = tmp;
+        if (pendingtx.find(s)!=pendingtx.end()){
+          txcount++;
+          latency += (block_time - pendingtx[s]);
           // then remove
-          pendingtx.erase(s); 
+          pendingtx.erase(s);
         }
       }
-      txlock_.unlock(); 
+      txlock_.unlock();
     }
-    cout << "In the last "<<interval<<"s, tx count = " << txcount << " latency = " << latency/1000000000.0 << " outstanding request = " << pendingtx.size() << endl;  
-    txcount = 0; 
-    latency = 0; 
+    cout << "In the last "<<interval<<"s, tx count = " << txcount << " latency = " << latency/1000000000.0 << " outstanding request = " << pendingtx.size() << endl;
+    txcount = 0;
+    latency = 0;
 
-    end_time = time_now(); 
+    end_time = time_now();
 
     //sleep in nanosecond
     sleep(interval-(end_time-start_time)/1000000000.0);
@@ -120,8 +120,8 @@ int main(int argc, char* argv[]) {
   }
   os_.open(spath, std::ios::app);
 
-  SmallBank* sb = SmallBank::GetInstance("SmallbankExample", argv[5]);
-  sb->Init(&pendingtx, &txlock_); 
+  SmallBank* sb = SmallBank::GetInstance("github.com/smallbank", argv[5]);
+  sb->Init(&pendingtx, &txlock_);
 
   int current_tip = sb->get_tip_block_number();
   cout << "Current TIP = " << current_tip << endl;

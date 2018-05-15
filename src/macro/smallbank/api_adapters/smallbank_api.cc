@@ -59,22 +59,21 @@ unsigned int SmallBank::get_tip_block_number(){
 
 void SmallBank::add_to_queue(string json){
   double start_time = time_now();
-  string txn_hash = get_json_field(json, "message"); 
-  txlock_->lock(); 
+  string txn_hash = get_json_field(json, "message");
+  txlock_->lock();
   (*pendingtx_)[txn_hash] = start_time;
   txlock_->unlock();
 }
 
 // no error handler, assume always success
 void SmallBank::deploy(const std::string& path, const std::string& endpoint) {
-  endpoint_ = endpoint; 
+  endpoint_ = endpoint;
   std::vector<std::string> args;
-  cout << "deploy request " << compose_deploy(path, args) << " to " << endpoint_ << endl; 
-  Response r = post(endpoint_, REQUEST_HEADERS,
-  compose_deploy("https://github.com/ijingo/chaincode-test/smallbank", args));
+  cout << "deploy request " << compose_deploy(path, args) << " to " << endpoint_ << endl;
+  Response r = post(endpoint_, REQUEST_HEADERS, compose_deploy(path, args));
   chaincode_name_ = get_json_field(r.body, "message");
   cout << "Deployed new chaincode: " << chaincode_name_ << endl;
-  sleep(2);  
+  sleep(5);
 }
 
 void SmallBank::Amalgate(unsigned acc1, unsigned acc2) {
@@ -83,7 +82,7 @@ void SmallBank::Amalgate(unsigned acc1, unsigned acc2) {
   args.push_back(to_string(acc2));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "amalgate", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
 }
 
 void SmallBank::GetBalance(unsigned acc) {
@@ -91,7 +90,7 @@ void SmallBank::GetBalance(unsigned acc) {
   args.push_back(to_string(acc));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "getBalance", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
   // cout << compose_invoke(chaincode_name_, "getBalance", args) << endl;
 }
 
@@ -101,7 +100,7 @@ void SmallBank::UpdateBalance(unsigned acc, unsigned amount) {
   args.push_back(to_string(amount));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "updateBalance", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
   // cout << compose_invoke(chaincode_name_, "updateBalance", args) << endl;
 }
 
@@ -111,7 +110,7 @@ void SmallBank::UpdateSaving(unsigned acc, unsigned amount) {
   args.push_back(to_string(amount));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "updateSaving", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
   // cout << compose_invoke(chaincode_name_, "updateSaving", args) << endl;
 }
 
@@ -122,7 +121,7 @@ void SmallBank::SendPayment(unsigned acc1, unsigned acc2, unsigned amount) {
   args.push_back(to_string(amount));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "sendPayment", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
   // cout << compose_invoke(chaincode_name_, "sendPayment", args) << endl;
 }
 
@@ -132,6 +131,6 @@ void SmallBank::WriteCheck(unsigned acc, unsigned amount) {
   args.push_back(to_string(amount));
   Response r = post(endpoint_, REQUEST_HEADERS,
        compose_invoke(chaincode_name_, "writeCheck", args));
-  add_to_queue(r.body); 
+  add_to_queue(r.body);
   // cout << compose_invoke(chaincode_name_, "sendPayment", args) << endl;
 }
