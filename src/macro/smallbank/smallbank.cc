@@ -55,6 +55,7 @@ void ClientThread(SmallBank* sb, const int num_ops, const int ivl) {
         sb->WriteCheck(acc_gen.Next(), 0);
         break;
     }
+    --ops;
     sleep(0.1);
   }
 }
@@ -65,8 +66,8 @@ int StatusThread(SmallBank* sb, string endpoint, double interval, int start_bloc
   long end_time;
   int txcount = 0;
   long latency;
-
-  while(true){
+  bool finish = false;
+  while(!finish){
     start_time = time_now();
     int tip = sb->get_tip_block_number();
     if (tip==-1) // fail
@@ -89,6 +90,7 @@ int StatusThread(SmallBank* sb, string endpoint, double interval, int start_bloc
       txlock_.unlock();
     }
     cout << "In the last "<<interval<<"s, tx count = " << txcount << " latency = " << latency/1000000000.0 << " outstanding request = " << pendingtx.size() << endl;
+    if (ops.load() == 0 && pendingtx.size() == 0) {finish = true; }
     txcount = 0;
     latency = 0;
 
@@ -97,7 +99,6 @@ int StatusThread(SmallBank* sb, string endpoint, double interval, int start_bloc
     //sleep in nanosecond
     sleep(interval-(end_time-start_time)/1000000000.0);
   }
-
 }
 
 int main(int argc, char* argv[]) {
@@ -114,6 +115,8 @@ int main(int argc, char* argv[]) {
   const int thread_num = stoi(argv[2]);
   const int ivl = stoi(argv[3]);
   string spath = argv[4];
+
+  ops.store(static_cast<unsigned long long>(total_ops));
 
   if (os_.is_open()) {
     os_.close();
