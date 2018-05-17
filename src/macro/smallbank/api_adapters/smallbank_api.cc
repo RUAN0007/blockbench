@@ -73,7 +73,8 @@ void SmallBank::deploy(const std::string& path, const std::string& endpoint) {
   Response r = post(endpoint_, REQUEST_HEADERS, compose_deploy(path, args));
   chaincode_name_ = get_json_field(r.body, "message");
   cout << "Deployed new chaincode: " << chaincode_name_ << endl;
-  sleep(5);
+  cout << "Press Enter to Continue";
+  cin.ignore();
 }
 
 void SmallBank::Amalgate(unsigned acc1, unsigned acc2) {
