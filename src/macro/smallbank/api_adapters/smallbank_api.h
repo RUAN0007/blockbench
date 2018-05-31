@@ -6,9 +6,9 @@
 #include "utils/utils.h"
 #include <unordered_map>
 #include <vector>
-using std::unordered_map; 
-using std::string; 
-using std::vector; 
+using std::unordered_map;
+using std::string;
+using std::vector;
 
 class SmallBank {
  public:
@@ -35,14 +35,14 @@ class SmallBank {
   unsigned int get_tip_block_number();
   vector<string> poll_tx(int block_number);
   int find_tip(string json);
-  vector<string> find_tx(string json); 
-  string get_json_field(const string &json, const string &key); 
+  vector<string> find_tx(string json);
+  string get_json_field(const string &json, const string &key);
  private:
   void deploy(const std::string& path, const std::string& endpoint);
-  void add_to_queue(string json); 
+  void add_to_queue(string json);
   std::string chaincode_name_, endpoint_;
-  unordered_map<string, double> *pendingtx_; 
-  SpinLock *txlock_; 
+  unordered_map<string, double> *pendingtx_;
+  SpinLock *txlock_;
 };
 
 #endif
