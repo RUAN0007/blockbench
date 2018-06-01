@@ -1,7 +1,5 @@
-THREADS=[16]
-TXRATES=[32]
+TXRATES=[5]
 BOOTSTRAP_HOSTNO=50     # <-- where there server (running HL) is
-CLIENT_HOSTNO=90        # <-- where the driver/client is
 HOST="slave-{}"
 
 HL_FILESYSTEMPATH="/data/ruanpc/hyperledger"   # <-- where the HL is store (for rocksdb)
@@ -20,13 +18,12 @@ LOGGING_LEVEL = "warning:consensus/pbft,consensus/executor,ledger,db,buckettree,
 ENV_TEMPLATE = ("CORE_PEER_ID=vp{} CORE_PEER_ADDRESSAUTODETECT=true "
                 "CORE_PEER_NETWORK=blockbench "
                 "CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft "
-                "CORE_PEER_FILE_SYSTEM_PATH="+HL_FILESYSTEMPATH+" "
+                "CORE_PEER_FILESYSTEMPATH="+HL_FILESYSTEMPATH+" "
                 "CORE_VM_ENDPOINT=http://localhost:2375 "
                 "CORE_PBFT_GENERAL_MODE=batch "
-                "CORE_PBFT_GENERAL_TIMEOUT_BATCH=1s "
-                "CORE_PBFT_GENERAL_TIMEOUT_REQUEST=2s "
-                "CORE_PBFT_GENERAL_TIMEOUT_VIEWCHANGE=2s "
-                "CORE_PBFT_GENERAL_TIMEOUT_RESENDVIEWCHANGE=1s "
+                "CORE_PBFT_GENERAL_TIMEOUT_REQUEST=100s "
+                "CORE_PBFT_GENERAL_TIMEOUT_VIEWCHANGE=10s "
+                "CORE_PBFT_GENERAL_TIMEOUT_RESENDVIEWCHANGE=10s "
                 "CORE_PBFT_GENERAL_N={} "
                 "CORE_PBFT_GENERAL_F=0 "
                 "LEDGER_SAMPLE_INTERVAL=127 "
@@ -41,5 +38,4 @@ ENV_EXTRA = "CORE_PEER_DISCOVERY_ROOTNODE={}:7051"
 CMD="\" removeUnwantedImages; rm -rf {};  {} nohup " + PEER_EXE + " node start --logging-level= " + LOGGING_LEVEL + " > {} 2>&1 &\""
 KILL_SERVER_CMD = "pkill -TERM peer"
 
-CLIENT_CMD = "\"" + CLIENT_EXE + " {} {} {} 100 {} github.com/smallbank > {} 2>&1 &\""
-KILL_CLIENT_CMD = "killall -KILL driver"
+CLIENT_CMD = CLIENT_EXE + " {} {} {} 100 {} github.com/smallbank > {} 2>&1"

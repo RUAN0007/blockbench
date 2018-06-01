@@ -23,20 +23,17 @@ def run_servers(nodes, cmds):
   for i in range(len(nodes)):
     cmd="ssh {} {}".format(nodes[i], cmds[i])
     print cmd
-    os.system(cmd)
+    # os.system(cmd)
 
-# def run_clients(client, server, num_node, num_txn, num_thread, txrate):
-#   client_log_path = CLI_LOG_PATH.format(num_node, txrate, num_thread)
-#   endpoint = server +
-#   client_cmd = CLIENT_CMD.format(num_txn, num_thread, txrate, endpoint, client_log_path)
-#   cmd = "ssh {} {}".format(client, client_cmd)
-#   print cmd
-  # os.system(cmd)
+def run_client(server, num_node, num_txn, num_thread, txrate, db_type):
+  print "==========================================================="
+  client_log_path = CLI_LOG_PATH.format(num_node, txrate, num_thread, db_type)
+  endpoint = server + ":7051/chaincode/"
+  client_cmd = CLIENT_CMD.format(num_txn, num_thread, txrate, endpoint, client_log_path)
+  print client_cmd
+  # os.system(client_cmd)
 
-def stop(client, servers):
-  # kill_client = "ssh {} {}".format(client, KILL_CLIENT_CMD)
-  # print kill_client
-  # os.system(kill_client)
+def stop(servers):
   for s in servers:
     kill_server = "ssh {} {}".format(s, KILL_SERVER_CMD)
     print kill_server
@@ -69,11 +66,10 @@ def run_exp(num_node, num_txn, num_thread, txrate, batch_size, db_type):
 
 
   run_servers(nodes, cmds)
-  time.sleep(10)
+  # time.sleep(10)
   print "Network Setup"
 
-  # CLIENT_NODE = HOST.format(CLIENT_HOSTNO)
-  # run_clients(CLIENT_NODE, NODES[0], WORKLOAD_FILE, thread, txrate, db_type)
+  run_client(nodes[0], num_node, num_txn, num_thread, txrate,db_type)
 
   # time.sleep(SLEEP_TIME)
 
@@ -102,22 +98,23 @@ if __name__ == "__main__":
   txrate = int(sys.argv[5])
   batch_size = int(sys.argv[6])
   run_exp(num_node, num_txn, num_thread, txrate, batch_size, db_type)
+  print "Finish Experiment with {} num_node {} num_txn {} num_thread {} txrate {} batch_size {} dbtype".format(num_node, num_txn, num_thread, txrate, batch_size, db_type)
 
-  raw_input("End the servers and Query the size for DB??")
-  nodes=[]
-  nodes.append(HOST.format(BOOTSTRAP_HOSTNO))
-  for i in range(1,num_node):
-    nodes.append(HOST.format(BOOTSTRAP_HOSTNO+i))
+  # raw_input("End the servers and Query the size for DB??")
+  # nodes=[]
+  # nodes.append(HOST.format(BOOTSTRAP_HOSTNO))
+  # for i in range(1,num_node):
+  #   nodes.append(HOST.format(BOOTSTRAP_HOSTNO+i))
 
-  stop([], nodes)
-  # This python script must run at a hl node.
-  db_size = 0
-  if db_type == "rocksdb" or db_type == "original":
-    db_size = get_db_size(HL_FILESYSTEMPATH)
-  elif db_type == "ustore":
-    db_size = get_db_size(USTORE_DATAPATH)
-  else:
-    print "Unrecognized DB", db_type
-    sys.exit(0)
-  print("db size: {}".format(db_size))
+  # stop([], nodes)
+  # # This python script must run at a hl node.
+  # db_size = 0
+  # if db_type == "rocksdb" or db_type == "original":
+  #   db_size = get_db_size(HL_FILESYSTEMPATH)
+  # elif db_type == "ustore":
+  #   db_size = get_db_size(USTORE_DATAPATH)
+  # else:
+  #   print "Unrecognized DB", db_type
+  #   sys.exit(0)
+  # print("db size: {}".format(db_size))
 
