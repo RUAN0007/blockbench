@@ -23,7 +23,7 @@ def run_servers(nodes, cmds):
   for i in range(len(nodes)):
     cmd="ssh {} {}".format(nodes[i], cmds[i])
     print cmd
-    # os.system(cmd)
+    os.system(cmd)
 
 def run_client(server, num_node, num_txn, num_thread, txrate, db_type):
   print "==========================================================="
@@ -31,7 +31,7 @@ def run_client(server, num_node, num_txn, num_thread, txrate, db_type):
   endpoint = server + ":7051/chaincode/"
   client_cmd = CLIENT_CMD.format(num_txn, num_thread, txrate, endpoint, client_log_path)
   print client_cmd
-  # os.system(client_cmd)
+  os.system(client_cmd)
 
 def stop(servers):
   for s in servers:
@@ -66,7 +66,7 @@ def run_exp(num_node, num_txn, num_thread, txrate, batch_size, db_type):
 
 
   run_servers(nodes, cmds)
-  # time.sleep(10)
+  time.sleep(10)
   print "Network Setup"
 
   run_client(nodes[0], num_node, num_txn, num_thread, txrate,db_type)
