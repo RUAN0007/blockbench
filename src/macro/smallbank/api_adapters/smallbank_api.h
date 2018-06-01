@@ -2,8 +2,8 @@
 #define SMARTCONTRACT_DRIVERS_SMALLBANK_H_
 
 #include <string>
-#include "utils/timer.h"
-#include "utils/utils.h"
+#include "../utils/timer.h"
+#include "../utils/utils.h"
 #include <unordered_map>
 #include <vector>
 using std::unordered_map;
